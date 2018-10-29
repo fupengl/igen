@@ -1,0 +1,52 @@
+appName = "Microservice of MSDEMO"
+
+env = "dev"
+
+# 内网IP
+localAddress = "{{127.0.0.1 | LOCAL_ADDRESS}}"
+
+# 外网IP
+publicAddress = "{{$localAddress | PUBLIC_ADDRESS}}"
+
+# HTTP监听地址和端口
+httpAddress = "{{ | IGEN_MSDEMO_HTTP_ADDRESS}}"
+httpPort = 8081
+
+# 域名 https://api.example.com
+_apiHost = "http://{{$publicAddress}}:{{$httpPort}}"
+apiHost = "{{$_apiHost | IGEN_MSDEMO_API_HOST}]"
+
+logLevel = "debug"
+logFilename = "log/access.log"
+
+# app secret
+[appSecret]
+  wx = "khXPqygDFNL8JyrBiYGLTe1c9pfac9dwXrWSgpV6qMSR5RSkAwi4DUx2tsLVebEi"
+  wap = "0LYgXubi7wFxsiiUAdeEHkJX6DBMD7hHuP1UCuSIrqt8VCWNmLGTdqkkv4ZhxFkZ"
+
+[consul]
+  address = "{{127.0.0.1:8500 | IGEN_CONSUL_ADDRESS}}"
+
+  [[consul.Services]]
+    name = "igen.msdemo.http"
+    address = "{{$localAddress}}"
+    port = {{$httpPort}}
+    tags = ["http"]
+    checkURL = "http://{{$localAddress}}:{{$httpPort}}/consul/actions/check_http"
+
+# Redis配置
+[redis]
+  [redis.dev]
+    addr  = "{{127.0.0.1:6379 | IGEN_MS_REDIS_ADDR}}"
+    password = "{{ | IGEN_MS_REDIS_PASSWORD}}"
+    db = 0
+
+  [redis.prod]
+    addr  = "{{127.0.0.1:6379 | IGEN_MS_REDIS_ADDR}}"
+    password = "{{ | IGEN_MS_REDIS_PASSWORD}}"
+    db = 0
+
+  [redis.test]
+    addr  = "127.0.0.1:6379"
+    password = ""
+    db = 10

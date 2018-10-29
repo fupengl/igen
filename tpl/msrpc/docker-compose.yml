@@ -1,0 +1,28 @@
+version: "3"
+services:
+  msdemo:
+    image: igen_msdemo:latest
+    container_name: igen_msdemo
+    build: .
+    ports:
+      - "8081:8081"
+      - "8181:8181"
+    volumes:
+      - .:/go/src/igen/msdemo
+    external_links:
+     - consul-dev
+     - redis
+     - mongo
+    environment:
+      LOCAL_ADDRESS: "igen_msdemo"
+      IGEN_CONSUL_ADDRESS: "consul-dev:8500"
+      IGEN_MS_REDIS_ADDR: "redis:6379"
+      IGEN_MSDEMO_MGO_DNS: "mongodb://mongo:27017/igen_msdemo_dev"
+    networks:
+      - igen_net
+    command: "sh -c 'gowatch | logf'"
+
+networks:
+  igen_net:
+    external:
+      name: "igen_net"

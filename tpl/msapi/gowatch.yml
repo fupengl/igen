@@ -1,0 +1,4 @@
+watch_exts:
+  - .go
+  - .toml
+vendor_watch: true

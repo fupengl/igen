@@ -1,0 +1,66 @@
+appName = "Microservice of MSDEMO"
+
+env = "dev"
+
+# 内网IP
+localAddress = "{{127.0.0.1 | LOCAL_ADDRESS}}"
+
+# HTTP监听地址和端口
+httpAddress = "{{$localAddress | IGEN_MSDEMO_HTTP_ADDRESS}}"
+httpPort = 8081
+
+# RPC监听的地址和端口
+rpcAddress = "{{$localAddress| IGEN_MSDEMO_RPC_ADDRESS}}"
+rpcPort = 8181
+
+logLevel = "debug"
+logFilename = "log/access.log"
+
+[consul]
+  address = "{{127.0.0.1:8500 | IGEN_CONSUL_ADDRESS}}"
+
+  [[consul.Services]]
+    name = "igen.msdemo.http"
+    address = "{{$localAddress}}"
+    port = {{$httpPort}}
+    tags = ["http"]
+    checkURL = "http://{{$localAddress}}:{{$httpPort}}/consul/actions/check_http"
+
+  [[consul.Services]]
+    name = "igen.msdemo.rpc"
+    address = "{{$localAddress}}"
+    port = {{$rpcPort}}
+    tags = ["rpc"]
+    checkURL = "http://{{$localAddress}}:{{$httpPort}}/consul/actions/check_rpc"
+
+# 数据库配置
+[mongoDb]
+  [mongoDb.msdemo]
+    [mongoDb.msdemo.dev]
+      dns  = "{{mongodb://127.0.0.1:27017/igen_msdemo_dev | IGEN_MSDEMO_MGO_DNS}}"
+      name = "{{igen_msdemo_dev | IGEN_MSDEMO_MGO_NAME}}"
+
+    [mongoDb.msdemo.prod]
+      dns  = "{{mongodb://127.0.0.1:27017/igen_msdemo_prod | IGEN_MSDEMO_MGO_DNS}}"
+      name = "{{igen_msdemo_prod | IGEN_MSDEMO_MGO_NAME}}"
+
+    [mongoDb.msdemo.test]
+      dns  = "mongodb://127.0.0.1:27017/igen_msdemo_test"
+      name = "igen_msdemo_test"
+      
+# Redis配置
+[redis]
+  [redis.dev]
+    addr  = "{{127.0.0.1:6379 | IGEN_MS_REDIS_ADDR}}"
+    password = "{{ | IGEN_MS_REDIS_PASSWORD}}"
+    db = 0
+
+  [redis.prod]
+    addr  = "{{127.0.0.1:6379 | IGEN_MS_REDIS_ADDR}}"
+    password = "{{ | IGEN_MS_REDIS_PASSWORD}}"
+    db = 0
+
+  [redis.test]
+    addr  = "127.0.0.1:6379"
+    password = ""
+    db = 10
